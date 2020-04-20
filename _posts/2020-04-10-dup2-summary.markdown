@@ -1,5 +1,5 @@
 ---
-layout:        default
+layout:        post
 title:         "dup2 summary"
 subtitle:      "linux里使用dup2的一些总结"
 date:          "2020-04-10 17:20:20 +0800"
