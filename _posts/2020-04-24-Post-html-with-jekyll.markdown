@@ -31,5 +31,5 @@ jekyll对于markdown和html支持的效果实际类似，也可以直接在markd
 # 样例 #
 (转载自[https://github.com/tcdw/servalclock](https://github.com/tcdw/servalclock))
 
-[薮猫报时器(html文件版)](/2020/04/24/Sou-Mao/)<br>
-[薮猫报时器(markdown文件版)](/2020/04/26/Sou-Mao/)
+[薮猫报时器(html文件版)](/static/SouMao/)<br>
+[薮猫报时器(markdown文件版)](/static/SouMao-md/)

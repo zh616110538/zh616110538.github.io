@@ -1,10 +1,10 @@
 ---
 layout:        default
-title:         "Sou Mao"
 subtitle:      "薮猫报时器"
 date:          "2020-04-26 16:06:58 +0800"
 author:        "Remilia Scarlet"
 header-img:    "img/post-bg-2015.jpg"
+listed: false
 tags:
     - js
     - html
