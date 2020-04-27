@@ -50,9 +50,9 @@ if __name__ == '__main__':
     layouts = [os.path.splitext(i)[0] for i in os.listdir('_layouts')]
     cf['layout'] = layouts[menuSelect('What layout do you want to use?',layouts)]
     cf['title'] = input("input title:")
-    while cf['title'] == '' or not checkTitle(cf['title']):
-        print('Title should be in English!')
-        cf['title'] = input("input title again:")
+    #while cf['title'] == '' or not checkTitle(cf['title']):#中文名也是可行的，只是在windows上有bug而已
+    #    print('Title should be in English!')
+    #    cf['title'] = input("input title again:")
     cf['subtitle'] = input('input subtitle:')
     cf['tags'] = inputTags('input tags(split by comma):')
     cf['date'] = time.strftime("%Y-%m-%d %H:%M:%S +0800", time.localtime())
