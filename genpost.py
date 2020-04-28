@@ -16,7 +16,7 @@ def menuSelect(s,l):
         print('\t%d) %s' % (i+1,l[i]))
     i = input("layout:")
     if i == '':
-        return 0
+        return l.index('post')
     return int(i)-1
 
 def inputTags(s):
@@ -49,7 +49,7 @@ def getYaml(cf):
 
 if __name__ == '__main__':
     layouts = [os.path.splitext(i)[0] for i in os.listdir('_layouts')]
-    cf['layout'] = layouts[menuSelect('What layout do you want to use?',layouts)]
+    cf['layout'] = layouts[menuSelect('What layout do you want to use?(default is post)',layouts)]
     cf['title'] = input("input title:")
     #while cf['title'] == '' or not checkTitle(cf['title']):#中文名也是可行的，只是在windows上有bug而已
     #    print('Title should be in English!')

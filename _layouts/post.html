@@ -50,7 +50,10 @@ layout: default
 				{{ content }}
 
                 <hr>
-
+				
+				<span id="busuanzi_container_page_pv"> | 访问量:<span id="busuanzi_value_page_pv"></span> 次</span>
+				
+				<hr>
                 {% if site.duoshuo_share && site.duoshuo_username %}
                 <!-- 多说 Share start -->
                 </style>
@@ -89,7 +92,7 @@ layout: default
                     </li>
                     {% endif %}
                 </ul>
-
+				
 
                 {% if site.duoshuo_username %}
                 <!-- 多说评论框 start -->
