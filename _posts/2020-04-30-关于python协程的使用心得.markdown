@@ -1,0 +1,99 @@
+---
+layout:        post
+title:         "关于python协程的使用心得"
+date:          "2020-04-30 16:08:56 +0800"
+author:        "Remilia Scarlet"
+header-img:    "img/post-bg-2015.jpg"
+tags:
+    - python
+---
+
+## 体会 ##
+花了两天时间看了一下python的协程功能，不得不说真的是一个非常强大的库。<br>
+利用了aiohttp的库修改了一下以前写的单线程爬虫，从耗时1分36秒变成了8秒，编程模型和之前几乎相同，实现功能的部分就是将原来的代码替换成async/await即可。主要区别集中在于主逻辑部分，需要将任务分割成协程然后加入到协程的任务列表中（这一点有些和多线程类似）<br>
+总体来说协程的代码会比单线程复杂一点，但是比多线程简单很多，并且能够最大化的利用io从而提高效率。
+
+## 介绍 ##
+asyncio是Python 3.4版本引入的标准库，直接内置了对异步IO的支持。<br>
+asyncio的编程模型就是一个消息循环。我们从asyncio模块中直接获取一个EventLoop的引用，然后把需要执行的协程扔到EventLoop中执行，就实现了异步IO。<br>
+
+**注意：python在3.5及后续的版本对语法和api进行了一些修改，建议直接升级到3.7以后的版本，以防一些代码跑不起来。**
+
+
+## 简单用法 ##
+#### **注意，我本地的环境是python3.7.2** ####
+
+	import asyncio
+	import time
+	
+	async def say_after(delay, what):
+	    await asyncio.sleep(delay)
+	    print(what)
+	
+	async def main():
+	    print(f"started at {time.strftime('%X')}")
+	
+	    await say_after(1,'hello')
+		await say_after(2,'world')
+	
+	    print(f"finished at {time.strftime('%X')}")
+	
+	asyncio.run(main())
+
+上述代码输出为:
+
+	started at 17:27:39
+	hello
+	world
+	finished at 17:27:42
+
+分别执行了两次say_after函数，程序总的运行时间3秒，符合单线程的输出<br>
+然而协程的强大之处在于可以非阻塞的执行io操作，所以修改代码成如下样子:
+
+
+	import asyncio
+	import time
+	
+	async def say_after(delay, what):
+	    await asyncio.sleep(delay)
+	    print(what)
+	
+	async def main():
+	    print(f"started at {time.strftime('%X')}")
+		#这里讲两个任务直接添加到了一个列表里，然后调用asyncio.wait会等待所有协程全部完成
+	    tasks = [say_after(i,j) for i,j in [(1,'hello'),(2,'world')]] 
+	    await asyncio.wait(tasks)
+	
+	    print(f"finished at {time.strftime('%X')}")
+	
+	asyncio.run(main())
+
+上述代码输出为:
+
+	started at 17:34:18
+	hello
+	world
+	finished at 17:34:20
+
+这里的asyncio.sleep可以看做是一个io操作，在第一个协程执行io操作时会自动切换到第二个协程中运行，所以最后总耗时只有2秒。
+
+## 关于异常 ##
+asyncio中的异常会在协程返回时报出，可以最后将失败的任务统一处理。示例如下:
+
+	async def _run():
+	    tasks = {dorequests(i):i for i in l}
+	    pending = set(tasks.keys())
+	    while pending:
+	        done,pending = await asyncio.wait(pending)
+	        for task in done:
+	            if task.exception():
+	                print("exception:%s" % tasks[task._coro])
+	                coro = tasks[task._coro]
+	                pending.add(dorequests(i))
+
+
+
+## 参考链接 ##
+[https://www.coder.work/article/1261931](https://www.coder.work/article/1261931)<br>
+[https://docs.python.org/zh-cn/3/library/asyncio-task.html](https://docs.python.org/zh-cn/3/library/asyncio-task.html)<br>
+[https://www.liaoxuefeng.com/wiki/1016959663602400/1048430311230688](https://www.liaoxuefeng.com/wiki/1016959663602400/1048430311230688)
