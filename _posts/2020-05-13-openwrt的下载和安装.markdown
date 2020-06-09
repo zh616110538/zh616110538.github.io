@@ -7,9 +7,20 @@ header-img:    "img/post-bg-2015.jpg"
 tags:
     - openwrt
 ---
+## 下载及安装 ##
 
-[查看固件是否支持](https://openwrt.org/zh/toh/views/toh_fwdownload)<br>
-[下载页面](https://downloads.openwrt.org/releases/)
+1. 首先[查看固件是否支持](https://openwrt.org/zh/toh/views/toh_fwdownload)
+2. 进入[下载页面](https://downloads.openwrt.org/releases/)，完成下载
+3. 进入BootLoader，将固件上传
 
-<br><br>
-未完待续。。
+## 配置 ##
+1. 将电脑的网线插到lan口后启动系统,
+2. 配置中文，在software里搜索base-zh-cn
+3. 启动wifi，在网络-无线里启用网卡即可
+
+## 关于某不科学的上网插件 ##
+1. [本体安装](https://github.com/kuoruan/openwrt-v2ray)
+2. [luci安装](https://github.com/kuoruan/luci-app-v2ray)
+3. [页面配置教程](http://loonlog.com/2020/3/13/v2ray-for-openwrt-config/)
+
+**注意：<br>1.安装前需要先卸载掉dnsmasq<br>2.lua报错module 'luci.cbi' not found，修复办法opkg install luci luci-base luci-compat（[参考链接](https://github.com/kuoruan/luci-app-v2ray/issues/42#issuecomment-573342526)）**
