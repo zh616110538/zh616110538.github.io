@@ -1,0 +1,28 @@
+---
+layout:        post
+title:         "记录几个初学js的坑"
+date:          "2020-08-01 23:06:32 +0800"
+author:        "Remilia Scarlet"
+header-img:    "img/post-bg-2015.jpg"
+tags:
+    - js
+    - html
+---
+
+## 问题背景 ##
+今天尝试将上次做的随机地图的功能全部作为前端实现，由于没有学过js和html等网页相关的内容，在调试方面花了不少时间，现在专门记一下这些问题以防以后再遇到。
+
+## 问题列表 ##
+
+1. 在js中的array查找是否存在某个元素的时候不能写if(i in arr)，但是map是可以的。正确的写法可以为if(arr.indexOf(i) != -1)
+2. js遍历数组时不能使用for(var i in arr)的写法，可以写为for(let i of arr)(**这里i直接是arr里的元素**)或者for(var i = 0;i<arr.length;++i)(**这里i是下标**)
+3. js作为静态文件在第一次加载之后不会刷新，chrome的正确刷新办法为shift+f5。这里如果想在服务端解决这个问题的话可以在html里链接js脚本的时候加上?ver=1，例如<script type=text/javascript src="js/popkart.js?ver=202008012137">
+4. js里如果想保存数据的话可以设置本地存储（cookie有限而且今天尝试并未成功，也许因为需要后端配合），本地存储的语法localStorage.setItem(key,value);localStorage.getItem(key);
+5. js是单线程执行且xhr的请求是异步执行的，如果想保证一定的顺序得用promise来做。
+
+
+## 参考链接 ##
+1. [https://www.cnblogs.com/yizhilin/p/7344675.html](https://www.cnblogs.com/yizhilin/p/7344675.html)
+2. [https://www.cnblogs.com/zaijin-yang/p/12196811.html](https://www.cnblogs.com/zaijin-yang/p/12196811.html)
+3. [https://www.jianshu.com/p/ab8f6b411e8a](https://www.jianshu.com/p/ab8f6b411e8a)
+4. [https://blog.csdn.net/solidsunshine/article/details/79225819](https://blog.csdn.net/solidsunshine/article/details/79225819)
