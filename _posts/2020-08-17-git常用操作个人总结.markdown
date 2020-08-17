@@ -1,0 +1,51 @@
+---
+layout:        post
+title:         "git常用操作个人总结"
+date:          "2020-08-17 16:47:15 +0800"
+author:        "Remilia Scarlet"
+header-img:    "img/post-bg-2015.jpg"
+tags:
+    - git
+---
+
+## git 放弃本地修改 强制更新
+	#第一种方法
+    git fetch --all
+	git reset --hard origin/master
+    git fetch #只是下载远程的库的内容，不做任何的合并 git reset 把HEAD指向刚刚下载的最新的版本
+	
+	#第二种方法
+	git checkout .
+	git clean -df
+
+
+## git设置代理
+	#设置本仓库的代理
+    git config --local http.proxy 'socks5://127.0.0.1:1080'
+    git config --local https.proxy 'socks5://127.0.0.1:1080'
+
+	#直接设置某个站点的饿代理
+    git config --global http.http://github.com.proxy 'socks5://127.0.0.1:1080 '
+    git config --global https.https://github.com.proxy 'socks5://127.0.0.1:1080'
+
+
+## git取消代理设置
+    git config --global --unset http.proxy
+    git config --global --unset https.proxy
+    npm config delete proxy
+
+## 修改缓冲区的方法提高克隆速度（非代理）
+
+    git config --global http.postBuffer 524288000
+
+## 只下载最新的代码
+    git clone --depth=1 https://github.com/bcit-ci/CodeIgniter.git
+
+## 查看一个远程仓库的url
+    git remote get-url origin
+
+## 修改远程仓库在本地的简称
+    git remote rename origin github
+
+## 添加一个远程url
+    git remote add gitee http://your-url
