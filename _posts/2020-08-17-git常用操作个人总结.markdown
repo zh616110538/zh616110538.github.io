@@ -49,3 +49,8 @@ tags:
 
 ## 添加一个远程url
     git remote add gitee http://your-url
+
+## git追踪某一行的提交记录
+    git blame file
+    git blame -L 3,10 file
+    git show commitid
