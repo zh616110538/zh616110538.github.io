@@ -24,8 +24,8 @@ tags:
     git config --local http.proxy 'socks5://127.0.0.1:1080'
     git config --local https.proxy 'socks5://127.0.0.1:1080'
 
-	#直接设置某个站点的饿代理
-    git config --global http.http://github.com.proxy 'socks5://127.0.0.1:1080'
+	#直接设置某个站点的代理
+    git config --global http.https://github.com.proxy 'socks5://127.0.0.1:1080'
     git config --global https.https://github.com.proxy 'socks5://127.0.0.1:1080'
 
 
