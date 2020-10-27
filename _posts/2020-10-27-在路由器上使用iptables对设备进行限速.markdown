@@ -1,0 +1,39 @@
+---
+layout:        post
+title:         "在路由器上使用iptables对设备进行限速"
+date:          "2020-10-27 22:17:05 +0800"
+author:        "Remilia Scarlet"
+header-img:    "img/post-bg-2015.jpg"
+tags:
+    - iptables
+    - router
+---
+
+## 背景 ##
+由于在外合租，隔壁使用wifi经常将上行速度占满，导致我自己根本上不了网，于是想到了限制一下隔壁设备的上行带宽。<br>由于默认提供了wifi，默认wifi的路由器设备不支持限速功能，所以我决定用自己的路由进行限速。
+
+## 思路 ##
+1. 先接管wifi到自己的路由器，在自己的路由上开启同名同密码的wifi，然后将默认提供的wifi关闭，这样其他设备会自动连接到我的路由器wifi上
+2. 利用自己的路由将占用宽带过高的设备进行限速（我使用的是NETGEAR R7000的路由器，刷了Merlin 380.70_0-X7.9的固件，该固件也不支持Qos限速，所以只能另外想其他办法。）
+
+## 利用iptables进行限速 ##
+
+假定要限速的设备ip为192.168.2.24，在FORWARD链路上利用limit限制通过的包<br>
+
+    # 限制上传速度
+    iptables -I FORWARD -s 192.168.2.24 -j DROP;iptables -I FORWARD -m limit -s 192.168.2.24 --limit 10/s -j ACCEPT
+	# 解除上传限制
+	iptables -D FORWARD -s 192.168.2.24 -j DROP;iptables -D FORWARD -m limit -s 192.168.2.24 --limit 10/s -j ACCEPT
+
+    # 限制下载速度
+    iptables -I FORWARD -d 192.168.2.24 -j DROP;iptables -I FORWARD -m limit -d 192.168.2.24 --limit 1000/s -j ACCEPT
+    # 解除下载限制
+	iptables -D FORWARD -d 192.168.2.24 -j DROP;iptables -D FORWARD -m limit -d 192.168.2.24 --limit 1000/s -j ACCEPT
+
+**注意这里--limit的参数单位是packet/time，packet为一个包的大小，后面的time为second/minute/hour/day一种**
+
+
+## 参考文章 ##
+[http://www.ctohome.com/FuWuQi/b4/682.html](http://www.ctohome.com/FuWuQi/b4/682.html)<br>
+[https://blog.51cto.com/ptallrights/1841911](https://blog.51cto.com/ptallrights/1841911)<br>
+[https://wangchujiang.com/linux-command/c/iptables.html](https://wangchujiang.com/linux-command/c/iptables.html)
