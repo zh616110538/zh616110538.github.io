@@ -9,14 +9,23 @@ tags:
 ---
 
 ## git 放弃本地修改 强制更新
-	#第一种方法
+    #第一种方法
     git fetch --all
-	git reset --hard origin/master
+    git reset --hard origin/master
     git fetch #只是下载远程的库的内容，不做任何的合并 git reset 把HEAD指向刚刚下载的最新的版本
 	
-	#第二种方法
-	git checkout .
-	git clean -df
+    #第二种方法
+    git checkout .
+    git clean -df
+
+## 在dev分支工作时合并主分支的新内容
+    #如果没有冲突
+    git pull master
+    
+    #如果有冲突，则先保存当前修改，合入完成后再解决冲突
+    git stash
+    git pull master
+    git stash pop
 
 
 ## git设置代理
