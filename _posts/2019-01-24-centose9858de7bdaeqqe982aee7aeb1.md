@@ -23,9 +23,9 @@ vim /etc/mail.rc 在文件末尾添加 
 set ssl-verify=ignore
 set smtp="smtps://smtp.qq.com:465" #第二个博客写的地址不对
 set smtp-auth=login
-set smtp-auth-user="zh616110538@qq.com"
+set smtp-auth-user="username@email.com"
 set smtp-auth-password="qq邮箱授权密码" #（在QQ邮箱 设置-账户- POP3/IMAP/SMTP/Exchange/CardDAV/CalDAV服务 里寻找）
-set from="zh616110538@qq.com"</code></pre>
+set from="username@email.com"</code></pre>
 
 **3.生成证书**
 
@@ -43,4 +43,4 @@ certutil -A -n "GeoTrust SSL CA - G3" -t "Pu,Pu,Pu"  -d ./ -i qq.crt</code></pre
 
 **5.测试是否成功**
 
-echo &#8220;test&#8221; |mail -s &#8220;test&#8221; [zh616110538@qq.com](mailto:zh616110538@gmail.com)
+echo &#8220;test&#8221; |mail -s &#8220;test&#8221; [username@email.com](mailto:username@email.com)

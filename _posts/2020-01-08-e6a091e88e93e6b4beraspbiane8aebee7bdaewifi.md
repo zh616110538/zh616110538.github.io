@@ -9,6 +9,7 @@ tags:
 ---
 参考链接： <https://www.cnblogs.com/zhangyuejia/p/8945354.html> 
 
+```
 $ cat /etc/wpa\_supplicant/wpa\_supplicant.conf
 
 ctrl\_interface=DIR=/var/run/wpa\_supplicant GROUP=netdev  
@@ -17,6 +18,7 @@ update_config=1
 country=CN
 
 network={  
-ssid=&#8221;NETGEAR_5G&#8221;  
-psk=&#8221;yiersansizailaiyici&#8221;  
+ssid=&#8221;NETGEAR&#8221;  
+psk=&#8221;youpassword&#8221;  
 }
+```
