@@ -4,6 +4,7 @@
 import os
 import time
 import string
+import re
 
 cf = {
     'author':'Remilia Scarlet',
@@ -57,7 +58,7 @@ if __name__ == '__main__':
     cf['subtitle'] = input('input subtitle:')
     cf['tags'] = inputTags('input tags(split by comma):')
     cf['date'] = time.strftime("%Y-%m-%d %H:%M:%S +0800", time.localtime())
-    filename = time.strftime("%Y-%m-%d", time.localtime())+'-%s' % cf['title'].replace(' ','-')
+    filename = time.strftime("%Y-%m-%d", time.localtime())+'-%s' % re.sub(r'\-+' , '-', re.sub(r'[?*\/<>:"|]','-', cf['title'])) #cf['title'].replace(' ','-')
     #yaml ='''---\nlayout:     %s\ntitle:      "%s"\nsubtitle:   "%s"\ndate:       %s\nauthor:     "%s"\nheader-img: "img/post-bg-2015.jpg"\ntags:\n%s\n---\n''' \
     #       % (layout,title,subtitle,date,author,tags)
     yaml = getYaml(cf)
