@@ -63,3 +63,10 @@ tags:
     git blame file
     git blame -L 3,10 file
     git show commitid
+
+## git revert回退版本
+    git revert HEAD  撤销前一次的commit
+    git revert HEAD^  撤销前前一次的commit
+    git revert <commitid>  撤销某一次的改动
+
+
