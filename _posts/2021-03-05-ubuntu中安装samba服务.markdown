@@ -25,7 +25,7 @@ sudo smbpasswd -a pi
 ## 4.配置samba的配置文件
 vim /etc/samba/smb.conf
 
-在配置文件smb.conf的最后添加下面的内容：
+在配置文件smb.conf的最后添加下面的内容：<br>
 [mnt]<br>
    path = /home/pi/workspace<br>
    writeable = yes<br>
