@@ -1,0 +1,37 @@
+---
+layout:        post
+title:         "ssh登录后删除记录"
+date:          "2021-03-23 14:02:18 +0800"
+author:        "Remilia Scarlet"
+header-img:    "img/post-bg-2015.jpg"
+tags:
+    - ssh
+    - kali
+---
+
+# 登录ssh后删除各种日志
+
+## 删除journalctl日志
+    journalctl --rotate
+    journalctl --vacuum-time=1s
+
+## 删除wtmp日志
+    echo "" > /var/log/wtmp
+    
+## 删除btmp日志
+    echo "" > /var/log/btmp
+    
+## 删除lastlog日志
+    echo "" > /var/log/lastlog
+
+## 删除auth.log日志
+    sed -i '/xxx.xxx.xxx.xxx/d' /var/log/auth.log
+    
+## 清除bash记录
+    history -r
+    
+# 参考链接
+[https://my.oschina.net/u/4301418/blog/3343026](https://my.oschina.net/u/4301418/blog/3343026 "https://my.oschina.net/u/4301418/blog/3343026") 
+[https://unix.stackexchange.com/questions/139513/how-to-clear-journalctl](https://unix.stackexchange.com/questions/139513/how-to-clear-journalctl "https://unix.stackexchange.com/questions/139513/how-to-clear-journalctl") 
+
+
