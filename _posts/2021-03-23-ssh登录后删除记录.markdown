@@ -16,13 +16,13 @@ tags:
     journalctl --vacuum-time=1s
 
 ## 删除wtmp日志
-    echo "" > /var/log/wtmp
+    [ -e /var/log/wtmp ] && > /var/log/wtmp
     
 ## 删除btmp日志
-    echo "" > /var/log/btmp
+    [ -e /var/log/btmp ] && > /var/log/btmp
     
 ## 删除lastlog日志
-    echo "" > /var/log/lastlog
+    [ -e /var/log/lastlog ] && > /var/log/lastlog
 
 ## 删除auth.log日志
     sed -i '/xxx.xxx.xxx.xxx/d' /var/log/auth.log
