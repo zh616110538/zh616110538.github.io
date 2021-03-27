@@ -1,0 +1,27 @@
+---
+layout:        post
+title:         "dpkg-deb的构建方法"
+date:          "2021-03-27 15:35:29 +0800"
+author:        "Remilia Scarlet"
+header-img:    "img/post-bg-2015.jpg"
+tags:
+    - ubuntu
+    - dpkg
+---
+
+# deb包的简单介绍 #
+[https://www.devdungeon.com/content/debian-package-tutorial-dpkgdeb](https://www.devdungeon.com/content/debian-package-tutorial-dpkgdeb "https://www.devdungeon.com/content/debian-package-tutorial-dpkgdeb")
+ 
+
+# 制作一个deb包 #
+[https://ubuntuforums.org/showthread.php?t=910717](https://ubuntuforums.org/showthread.php?t=910717 "https://ubuntuforums.org/showthread.php?t=910717") 
+
+# 在安装前后执行脚本 #
+[https://blog.csdn.net/yingyingququ/article/details/108848019](https://blog.csdn.net/yingyingququ/article/details/108848019 "https://blog.csdn.net/yingyingququ/article/details/108848019")  
+
+# 创建包时使用指定文件为root用户 #
+[https://stackoverflow.com/questions/23342433/files-installed-from-debian-package-with-dpkg-do-not-belong-to-root](https://stackoverflow.com/questions/23342433/files-installed-from-debian-package-with-dpkg-do-not-belong-to-root "https://stackoverflow.com/questions/23342433/files-installed-from-debian-package-with-dpkg-do-not-belong-to-root") 
+
+
+
+
