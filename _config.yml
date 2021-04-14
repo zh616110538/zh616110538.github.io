@@ -57,7 +57,12 @@ kramdown:
 # Share component is depend on Comment so we can NOT use share only.
 #duoshuo_share: true                     # set to false if you want to use Comment without Sharing
 
-
+# Gitalk settings
+gitalk_enable: true
+comment_gitalk_clientId: a80faff132d96a74cfa4
+comment_gitalk_clientSecret: 7481e57513fba5d809abee39e80cacba103f27ae
+comment_gitalk_repo: zh616110538.github.io
+github_username: zh616110538
 
 
 # Analytics settings
