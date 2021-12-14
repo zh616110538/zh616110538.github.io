@@ -1,0 +1,76 @@
+---
+layout:        post
+title:         "使用EC20搭配树莓派搭建短信接收服务"
+date:          "2021-12-14 22:41:48 +0800"
+author:        "Remilia Scarlet"
+header-img:    "img/post-bg-2015.jpg"
+tags:
+    - EC20
+    - sms
+---
+
+
+# 使用EC20搭配树莓派搭建短信接收服务
+
+## 物理连接
+将EC20模块通过USB接到树莓派的USB口，物理设备连接后查看是否有ttyUSB设备
+
+    ls /dev/ttyUSB*
+	
+如果有的话则代表物理连接成功
+
+## 安装依赖
+
+安装gammu
+
+    sudo apt-get install gammu
+
+安装gammu-smsd
+
+    sudo apt-get install gammu-smsd
+
+## 配置
+
+    # 配置gammu-config，将port依次填入/dev/ttyUSB设备，直到输出设备信息表示正确
+    gammu-config
+    gammu identify
+
+## 验证短信发送
+
+    gammu sendsms TEXT 178XXXXXXXX -text "这是一条测试短信" -unicode
+
+## 配置短信收取
+需要配置正确的/dev/ttyUSB设备，和connecntion，接收的短信配置为最后几个路径
+
+    cat /etc/gammu-smsdrc
+	# Configuration file for Gammu SMS Daemon
+
+	# Gammu library configuration, see gammurc(5)
+	[gammu]
+	# Please configure this!
+	port = /dev/ttyUSB2
+	connection = at19200
+	# Debugging
+	#logformat = textall
+
+	# SMSD configuration, see gammu-smsdrc(5)
+	[smsd]
+	service = files
+	logfile = syslog
+	# Increase for debugging information
+	debuglevel = 0
+
+	# Paths where messages are stored
+	inboxpath = /var/spool/gammu/inbox/
+	outboxpath = /var/spool/gammu/outbox/
+	sentsmspath = /var/spool/gammu/sent/
+	errorsmspath = /var/spool/gammu/error/
+
+设置开机启动
+
+    sudo systemctl start gammu-smsd.service
+	sudo systemctl enable gammu-smsd.service
+
+
+
+
