@@ -50,6 +50,7 @@ tags:
 	# Please configure this!
 	port = /dev/ttyUSB2
 	connection = at19200
+	synchronizetime = yes
 	# Debugging
 	#logformat = textall
 
@@ -57,6 +58,9 @@ tags:
 	[smsd]
 	service = files
 	logfile = syslog
+	commtimeout = 10
+	sendtimeout = 20
+
 	# Increase for debugging information
 	debuglevel = 0
 
@@ -71,6 +75,8 @@ tags:
     sudo systemctl start gammu-smsd.service
 	sudo systemctl enable gammu-smsd.service
 
+gammu-smsd发送邮件命令
 
+    gammu-smsd-inject TEXT 178XXXXXXXX -unicode -text "测试短信"
 
 
