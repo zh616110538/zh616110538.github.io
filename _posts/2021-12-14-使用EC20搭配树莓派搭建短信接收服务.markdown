@@ -29,9 +29,15 @@ tags:
 
     sudo apt-get install gammu-smsd
 
+安装minicom
+
+    sudo apt-get install minicom
+
 ## 配置
 
-    # 配置gammu-config，将port依次填入/dev/ttyUSB设备，直到输出设备信息表示正确
+    # 使用minicom测试哪个设备为短信端口，连接成功后敲at，如果输入ok表示就是该设备
+    minicom -D /dev/ttyUSB0
+    # 配置gammu-config，将port填入刚刚的/dev/ttyUSB设备，输出设备信息表示正确
     gammu-config
     gammu identify
 
@@ -40,7 +46,7 @@ tags:
     gammu sendsms TEXT 178XXXXXXXX -text "这是一条测试短信" -unicode
 
 ## 配置短信收取
-需要配置正确的/dev/ttyUSB设备，和connecntion，接收的短信配置为最后几个路径
+需要配置正确的/dev/ttyUSB设备，和connecntion，接收的短信配置为最后几个路径，设置接收短信触发程序为RunOnReceive
 
     cat /etc/gammu-smsdrc
 	# Configuration file for Gammu SMS Daemon
@@ -56,6 +62,7 @@ tags:
 
 	# SMSD configuration, see gammu-smsdrc(5)
 	[smsd]
+	RunOnReceive = /path/to/script.sh
 	service = files
 	logfile = syslog
 	commtimeout = 10
