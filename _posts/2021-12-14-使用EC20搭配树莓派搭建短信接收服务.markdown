@@ -87,3 +87,8 @@ gammu-smsd发送邮件命令
     gammu-smsd-inject TEXT 178XXXXXXXX -unicode -text "测试短信"
 
 
+## 一些巨坑
+
+发现设备一直掉线，经常无法收到消息
+
+解决办法：用dmesg查看是否出现断开连接，将EC20外接一个电源，并且将供电模式按钮打到外接供电上

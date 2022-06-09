@@ -1,0 +1,21 @@
+---
+layout:        post
+title:         "docker镜像自动更新"
+date:          "2022-06-09 13:20:28 +0800"
+author:        "Remilia Scarlet"
+header-img:    "img/post-bg-2015.jpg"
+tags:
+    - docker
+---
+
+# 使用方式  
+
+    # 拉取镜像
+    docker pull containrrr/watchtower
+
+    # 更新指定的容器
+    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower --run-once target-container-name
+
+# 参考链接
+[https://blog.minirplus.com/12138/](https://blog.minirplus.com/12138/)  
+[https://blog.csdn.net/Ber_Bai/article/details/114626330](https://blog.csdn.net/Ber_Bai/article/details/114626330)
