@@ -1,0 +1,26 @@
+---
+layout:        post
+title:         "一行命令打印出文件夹下所有中石化发票的金额"
+date:          "2022-08-29 22:20:17 +0800"
+author:        "Remilia Scarlet"
+header-img:    "img/post-bg-2015.jpg"
+tags:
+    - shell
+    - one-line
+---
+
+## 目标 ##
+
+首先目的很明确，就是想凑出一个金额而已。  
+但是由于油票比较零散，想凑出一个季度的的发票非常麻烦，又不想写很多代码，干脆做了个一行命令解决问题
+
+
+## 具体步骤 ##
+
+需要先安装pdftotext
+
+    sudo apt-get install -y xpdf
+
+然后用这个命令统计出所有的金额以及总金额
+
+    find . -name "*pdf" | xargs -I {} pdftotext {} - | awk -F'¥' 'BEGIN {count=0} /\(小写\)¥/{count+=$2;print $2} END {print count}'
