@@ -1,0 +1,87 @@
+---
+layout:        post
+title:         "为arm64制作ubuntu根文件系统"
+subtitle:      "build ubuntu rootfs for aarch64"
+date:          "2022-09-23 16:03:00 +0800"
+author:        "Remilia Scarlet"
+header-img:    "img/post-bg-2015.jpg"
+tags:
+    - ubuntu
+    - rootfs
+    - arm64
+---
+
+# 1. 下载ubuntu的base文件系统 #
+
+ubuntu20.04的下载位置在[http://cdimage.ubuntu.com/ubuntu-base/releases/20.04.5/release/](http://cdimage.ubuntu.com/ubuntu-base/releases/20.04.5/release/)  
+
+这里我选的是[ubuntu-base-20.04.5-base-arm64.tar.gz](http://cdimage.ubuntu.com/ubuntu-base/releases/20.04.5/release/ubuntu-base-20.04.5-base-arm64.tar.gz)
+
+    RootfsWorkingDir=/home/$USER/ubuntu-rootfs/
+    mkdir -p $RootfsWorkingDir
+    cd $RootfsWorkingDir
+    wget http://cdimage.ubuntu.com/ubuntu-base/releases/20.04.5/release/ubuntu-base-20.04.5-base-arm64.tar.gz
+
+# 2. 新建ext4文件系统并挂载到mnt #
+    dd if=/dev/zero of=rootfs.ext4 bs=1M count=2000  
+    mkfs.ext4 rootfs.ext4
+    sudo mount rootfs.ext4 /mnt
+**这里是分配了2G的空间来制作根文件系统，讲道理是够了，如果你不够的话自己改大一些**
+
+# 3. 将ubuntu-base的文件解压到mnt #
+    sudo tar xvf ubuntu-base-20.04.5-base-arm64.tar.gz -C /mnt
+    cd /mnt
+这里如果不用sudo命令去解压，文件的权限都会变样，请确保自己是root权限  
+
+    # 用ls -l看一下确保这里文件权限都是root用户
+    ls -l
+    lrwxrwxrwx  1 root root     7 8月  30 00:05 bin -> usr/bin
+    drwxr-xr-x  2 root root  4096 4月  15  2020 boot
+    drwxr-xr-x  2 root root  4096 8月  30 00:22 dev
+    drwxr-xr-x 30 root root  4096 8月  30 00:22 etc
+    drwxr-xr-x  2 root root  4096 4月  15  2020 home
+    lrwxrwxrwx  1 root root     7 8月  30 00:05 lib -> usr/lib
+    drwx------  2 root root 16384 9月  23 16:18 lost+found
+    drwxr-xr-x  2 root root  4096 8月  30 00:05 media
+    drwxr-xr-x  2 root root  4096 8月  30 00:05 mnt
+    drwxr-xr-x  2 root root  4096 8月  30 00:05 opt
+    drwxr-xr-x  2 root root  4096 4月  15  2020 proc
+    drwx------  2 root root  4096 8月  30 00:21 root
+    drwxr-xr-x  4 root root  4096 8月  30 00:05 run
+    lrwxrwxrwx  1 root root     8 8月  30 00:05 sbin -> usr/sbin
+    drwxr-xr-x  2 root root  4096 8月  30 00:05 srv
+    drwxr-xr-x  2 root root  4096 4月  15  2020 sys
+    drwxrwxrwt  2 root root  4096 8月  30 00:22 tmp
+    drwxr-xr-x 10 root root  4096 8月  30 00:05 usr
+    drwxr-xr-x 11 root root  4096 8月  30 00:21 var
+
+另外ubuntu20.04的bin、lib、sbin变成了软链接，这点和18.04好像不一样
+
+# 4. 装软件之前先做一下准备工作 #
+
+    # 设置dns
+    sudo cp /etc/resolv.conf /mnt/etc/resolv.conf
+
+    # 设置国内源（这里用的清华源）
+    sudo sed -i "s/ports.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g" /mnt/etc/apt/sources.list
+
+# 5. 使用qemu进入制作的根文件系统中 # 
+    sudo mount -t proc /proc /mnt/proc
+    sudo mount -t sysfs /sys /mnt/sys    
+    sudo mount -o bind /dev /mnt/dev
+    sudo mount -o bind /dev/pts /mnt/dev/pts
+    sudo chroot /mnt
+**在我的环境下，这里会自动调用qemu-aarch64-static**
+
+# 6. 安装各种软件 #
+    export LC_ALL=C
+    echo yourname > /etc/hostname
+    apt-get update
+    apt-get install locale dialog apt-transport-https ca-certificates
+
+# 退出qemu
+    exit
+    sudo umount /mnt/dev/pts
+    sudo umount /mnt/dev
+    sudo umount /mnt/proc
+    sudo umount /mnt/sys    
