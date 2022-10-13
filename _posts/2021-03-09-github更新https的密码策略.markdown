@@ -15,6 +15,17 @@ tags:
 # 生成token
 参考[Creating a personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token "Creating a personal access token")
 
+
+浏览器打开[https://github.com/settings/tokens/new](https://github.com/settings/tokens/new)
+
+填写Note  
+勾选Repo、workflow、user:email
+
+![screenshot](/img/gitoauth.png)
+完成后点击生成
+
+接下来将生成的字符串作为密码在git clone时填入即可
+
 # 将token添加到git中
 首先设置credential.helper为存储模式
 
