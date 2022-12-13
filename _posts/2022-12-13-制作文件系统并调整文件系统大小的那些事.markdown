@@ -1,0 +1,61 @@
+---
+layout:        post
+title:         "制作文件系统并调整文件系统大小的那些事"
+date:          "2022-12-13 20:14:42 +0800"
+author:        "Remilia Scarlet"
+header-img:    "img/post-bg-2015.jpg"
+tags:
+    - dd
+    - image
+    - sparse image
+    - e2fsck
+    - resize2fs
+---
+
+# 背景 #
+在一个板子上做好镜像后想复制到其他的板子上，整个根文件系统都在一个分区里，所以只要复制这个分区就行，用dd命令拷贝出来就行。但是整个磁盘的大小过于庞大,拷贝出来的镜像也很大，下一次写入的镜像也很大，所以想找个简单的办法解决这个问题
+
+
+# 方法 #
+
+## 1.制作镜像 ##
+
+制作镜像可以直接用dd命令拷贝磁盘，假设没有办法离线拷贝分区，可以先将rootfs设置成ro  
+
+    echo u > /proc/sysrq-trigger
+
+然后复制分区，假设分区为/dev/mmcblk0p1
+
+    dd if=/dev/mmcblk0p1 of=rootfs.img status=progress
+
+注意这里自己找一个可以写入文件的目录执行这个命令，当然也可以通过ssh来进行  
+
+    ssh user@host "dd if=/dev/mmcblk0p1 status=progress" > rootfs.img
+
+到这里制作镜像就完成了
+
+## 2.裁剪镜像 ##
+分区全部拷贝出来非常的大（分区有多大就有多大），下次写入也需要消耗相同的时间，所以这里需要对镜像进行裁剪  
+
+    zerofree rootfs.img
+    e2fsck -f -y rootfs.img
+    resize2fs -M rootfs.img
+    
+这三个操作进行完后，镜像会大幅度缩小
+
+## 3.写入新磁盘 ##
+    dd if=rootfs.img of=/dev/mmcblk0p1 status=progress
+    e2fsck -f -y /dev/mmcblk0p1
+    resize2fs /dev/mmcblk0p1
+
+## BTW 关于dd的conv=sparse ##
+如果不进行镜像裁剪的话，可以直接使用conv=sparse进行磁盘烧写，这样的话e2fsck和resize2fs的操作都可以省略  
+完成第一步后可以直接使用压缩的方式来减小体积
+
+    zerofree rootfs.img
+    pigz rootfs.img
+
+    
+# 参考链接 #
+
+[https://developer.aliyun.com/article/637485](https://developer.aliyun.com/article/637485)
