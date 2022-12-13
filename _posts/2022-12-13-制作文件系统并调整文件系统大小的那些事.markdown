@@ -52,9 +52,15 @@ tags:
 如果不进行镜像裁剪的话，可以直接使用conv=sparse进行磁盘烧写，这样的话e2fsck和resize2fs的操作都可以省略  
 完成第一步后可以直接使用压缩的方式来减小体积
 
-    zerofree rootfs.img
-    pigz rootfs.img
+对镜像镜像压缩
 
+    zerofree rootfs.img
+    # 压缩后会变成rootfs.img.gz
+    pigz rootfs.img
+    
+烧写镜像
+  
+    gzip -dc rootfs.img.gz | dd of=/dev/mmcblk0p1 conv=sparse status=progress
     
 # 参考链接 #
 
