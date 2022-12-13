@@ -83,6 +83,7 @@ tags:
 
 # 挂载到loop设备并显示其分区 #
 
+## 挂载 ##
     sudo losetup -v -f disk.img
 
     sudo losetup -a
@@ -111,6 +112,13 @@ tags:
     /dev/loop0p3: PARTUUID="79678ff9-e7d8-ce41-87fe-5b5d842ea3b4"
     /dev/loop0p4: PARTUUID="49ad0c66-4416-5f4d-8acf-a48af3e3ca6f"
 
+接下来把/dev/loop0p*用mount命令挂载到/mnt目录下就行了
+
+# 卸载 #
+先确认已经卸载/mnt目录
+
+    sudo partx -v -d /dev/loop0 
+    sudo losetup -D
 
 # 参考链接 #
 
