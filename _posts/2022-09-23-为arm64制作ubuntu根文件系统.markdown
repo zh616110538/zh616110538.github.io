@@ -293,7 +293,11 @@ ubuntu20.04的下载位置在[http://cdimage.ubuntu.com/ubuntu-base/releases/20.
     zlib1g:arm64 \
     socat \
     iperf3 \
-    resolvconf 
+    resolvconf \
+    libtinyxml2-dev \
+    libspdlog-dev \
+    python3-packaging \
+    net-tools
 
 # 7. 配置用户与一些其他配置 #
     useradd -G sudo -m -s /bin/bash pi
