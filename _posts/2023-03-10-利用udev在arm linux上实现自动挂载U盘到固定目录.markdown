@@ -15,7 +15,7 @@ tags:
 
 # 方案：使用udev实现 #
 
-/etc/ude/rules.d/99-uto-logger.rules  
+/etc/udev/rules.d/99-uto-logger.rules  
 
     ACTION=="add", KERNEL=="sd[a-zA-Z][0-9]", SUBSYSTEM=="block", SUBSYSTEMS=="usb",  RUN+="/usr/bin/systemd-run /usr/local/bin/logger-usb.sh add %k"
     ACTION=="remove", KERNEL=="sd[a-zA-Z][0-9]", SUBSYSTEM=="block", SUBSYSTEMS=="usb",  RUN+="/usr/bin/systemd-run /usr/local/bin/logger-usb.sh remove %k"
