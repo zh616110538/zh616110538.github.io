@@ -40,6 +40,8 @@ tags:
     Bridge obfs4 193.11.166.194:27025 1AE2C08904527FEA90C4C4F8C1083EA59FBC6FAF cert=ItvYZzW5tn6v3G4UnQa6Qz04Npro6e81AP70YujmK/KXwDFPTs3aHXcHp4n8Vt6w/bv8cA iat-mode=0
     EOF
 
+    sudo systemctl start tor@default.service
+
 **注意**：
 1. SocksProxy是本地的socks5代理
 2. Bride可以在[https://bridges.torproject.org/options/](https://bridges.torproject.org/options/)获取
@@ -48,8 +50,10 @@ tags:
 
 # 测试是否成功 #
 
-    curl ipinfo.io #不使用tor
-    torsocks curl ipinfo.io #使用tor
+    # 不使用tor
+    curl ipinfo.io 
+    # 使用tor
+    curl -x socks5://localhost:9050 ipinfo.io 
 
 
 # 参考链接 #
