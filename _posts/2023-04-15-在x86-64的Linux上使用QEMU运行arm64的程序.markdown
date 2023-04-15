@@ -1,0 +1,73 @@
+---
+layout:        post
+title:         "在x86-64的Linux上使用QEMU运行arm64的程序"
+date:          "2023-04-15 21:34:35 +0800"
+author:        "Remilia Scarlet"
+header-img:    "img/post-bg-2015.jpg"
+tags:
+    - QEMU
+---
+
+# QEMU介绍 #
+
+>QEMU（Quick EMUlator）是一个开源的处理器模拟器和虚拟化工具。QEMU 的主要目标是实现快速、高效的模拟和虚拟化，以便在不同的硬件架构和平台之间运行软件。QEMU 可以模拟多种处理器架构（如 >x86、ARM、MIPS 等）以及多种设备。QEMU 的工作原理可以从两个方面来解释：用户模式模拟（User-mode emulation）和系统模式模拟（System-mode emulation）。
+>
+>1. 用户模式模拟：
+>在用户模式模拟中，QEMU 只模拟指定架构的处理器，并运行其上的单个程序。在这种模式下，QEMU 将运行在不同架构的程序翻译为主机架构的指令。这是通过动态二进制翻译（Dynamic Binary >Translation，DBT）技术实现的。QEMU 将源架构的指令序列翻译成等效的主机架构指令序列，然后在主机处理器上执行这些指令。QEMU 还会模拟源架构的系统调用，以便在主机操作系统上正确执行它们。
+>用户模式模拟在跨架构软件开发和测试中非常有用，因为它允许用户在不同的处理器架构上运行和调试程序，而无需实际的硬件设备。
+>
+>2. 系统模式模拟：
+>在系统模式模拟中，QEMU 模拟整个计算机系统，包括处理器、内存、硬盘、网络设备等。在这种模式下，QEMU 可以运行一个完整的操作系统，包括内核和用户空间程序。与用户模式模拟类似，QEMU 使用动态>二进制翻译技术将源架构的指令翻译成主机架构的指令。此外，QEMU 还会模拟设备和硬件，以便虚拟机中的操作系统和程序可以与它们进行通信。
+>
+>系统模式模拟使得用户可以在同一台主机上运行多个独立的虚拟机，每个虚拟机都有自己的操作系统和资源。这对于虚拟化、云计算、软件测试和开发等应用非常有用。
+
+本次简单的使用QEMU的用户模式模拟在x86-64的Linux上运行一下arm64的程序
+
+# 过程 #
+
+## 环境安装 ##
+
+    sudo apt-get install gcc-aarch64-linux-gnu qemu qemu-user gdb-multiarch
+
+
+## 编写代码 ##
+
+    cat > hello.c
+    #include <stdio.h>
+
+    int main() {
+        printf("Hello, World!\n");
+        return 0;
+    }
+
+## 编译 ## 
+
+    aarch64-linux-gnu-gcc -o hello -Wl,-dynamic-linker=/usr/aarch64-linux-gnu/lib/ld-linux-aarch64.so.1 hello.c
+
+## 运行 ##
+
+    LD_LIBRARY_PATH=/usr/aarch64-linux-gnu/lib qemu-aarch64 ./hello
+
+**BTW**：
+
+1. gcc 的-Wl,-dynamic-linker参数是传给链接器的，-dynamic-linker用于修改程序interpreter路径，另外编译后的interpreter路径通过`readelf -l hello | grep interpreter`查看
+2. 直接`LD_LIBRARY_PATH=/usr/aarch64-linux-gnu/lib ./hello`也是可以运行的。原因是已经装了qemu-arm-static
+> 在这种情况下，内核会识别目标程序的二进制格式（如 ARM），并自动调用相应的 QEMU 用户模式模拟器（例如 qemu-arm-static）来运行程序。这是通过内核的 binfmt_misc 功能实现的，该功能允许在系统中注册可执行文件格式，并为这些格式关联特定的解释器。
+
+## 使用gdb调试 ##
+
+具体分两步：
+
+1. 先用qemu监听本地端口并运行hello程序
+
+        LD_LIBRARY_PATH=/usr/aarch64-linux-gnu/lib/ qemu-aarch64 -g 1234 ./hello
+
+2. 再使用`gdb-multiarch`调试
+
+        gdb-multiarch
+        file hello
+        target remote localhost:1234
+
+
+# 参考链接 #
+* [https://stackoverflow.com/questions/6562403/i-dont-understand-wl-rpath-wl](https://stackoverflow.com/questions/6562403/i-dont-understand-wl-rpath-wl)
