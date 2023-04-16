@@ -7,5 +7,6 @@ header-img:    "img/post-bg-2015.jpg"
 tags:
     - QEMU
 ---
-make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- menuconfig
-make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- all
+占坑
+<!-- make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- menuconfig
+make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- all -->
