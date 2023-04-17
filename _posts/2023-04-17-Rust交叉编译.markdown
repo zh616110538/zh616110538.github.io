@@ -1,0 +1,38 @@
+---
+layout:        keynote
+title:         "Rust交叉编译"
+date:          "2023-04-17 15:43:37 +0800"
+author:        "Remilia Scarlet"
+header-img:    "img/post-bg-2015.jpg"
+tags:
+    - rust
+---
+
+
+# 添加toolchain #
+
+下载目标机器的工具链，使用`rustup target list`命令查询
+
+其中，带musl的是静态链接，我这里要编译到arm64版本的，因此添加
+
+    rustup target add aarch64-unknown-linux-musl
+
+**BTW**:添加如果很慢的话需要换国内的源，可以参考[https://gist.githubusercontent.com/zh616110538/03c156a507a2427db2f0c0f7cc0d6ce7/raw/b2408809fcbcc106d03b4453daac35d17e28a044/.cargo_config](https://gist.githubusercontent.com/zh616110538/03c156a507a2427db2f0c0f7cc0d6ce7/raw/b2408809fcbcc106d03b4453daac35d17e28a044/.cargo_config)的配置替换自己的`~/.cargo/config`文件
+
+# 修改链接器 #
+
+打开`~/.cargo/config`文件，添加以下内容
+
+    [target.aarch64-unknown-linux-musl]
+    linker = "aarch64-linux-gnu-gcc"
+
+
+**注意**：
+1. 对于和本地架构不一致的机器，都得指定相应的链接器，否则只会使用默认的ld，导致链接失败
+2. 对应的链接器需要自己安装，ubuntu上为`sudo apt install gcc-aarch64-linux-gnu`
+
+
+# 编译 #
+
+    cargo build --target aarch64-unknown-linux-musl
+
