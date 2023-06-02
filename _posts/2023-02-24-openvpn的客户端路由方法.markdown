@@ -38,8 +38,8 @@ client所处的内网环境ip为`10.111.0.0/24`，client的openvpn ip为`192.168
 
 iptables持久化保存的方法
 
-    sudo iptables-save | sudo tee /etc/iptables/rules.v4
     sudo apt-get install iptables-persistent
+    netfilter-persistent save
 
 
 # reference #
