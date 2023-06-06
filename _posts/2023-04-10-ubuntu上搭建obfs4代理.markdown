@@ -33,6 +33,7 @@ tags:
     cat << EOF | sudo tee /etc/tor/torrc
     Socks5Proxy 127.0.0.1:1080
     SocksPort 0.0.0.0:9050
+    HTTPTunnelPort 9051
     UseBridges 1
     ClientTransportPlugin obfs4 exec /usr/bin/obfs4proxy
     ExitNodes {us}
@@ -44,8 +45,9 @@ tags:
 
 **注意**：
 1. SocksProxy是本地的socks5代理
-2. Bride可以在[https://bridges.torproject.org/options/](https://bridges.torproject.org/options/)获取
-3. ExitNodes可以在[https://metrics.torproject.org/rs.html#search/flag:exit%20country:us%20](https://metrics.torproject.org/rs.html#search/flag:exit%20country:us%20)获取，可以代替掉{us}
+2. Bride可以在[https://bridges.torproject.org/options/](https://bridges.torproject.org/options/)获取，注意获取到的桥复制过来不是直接就能用的，还得前面还得加上Bridge
+3. ExitNodes可以在[https://metrics.torproject.org/rs.html#search/flag:exit%20country:us%20](https://metrics.torproject.org/rs.html#search/flag:exit%20country:us%20)获取，可以代替掉{us}，格式为`ExitNodes IP:PORT`
+4. SocksPort是socks协议的代理，而HTTPTunnelPort是http协议的代理，根据需求使用
 
 
 # 测试是否成功 #
