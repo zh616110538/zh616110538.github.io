@@ -57,6 +57,9 @@ tags:
     # 使用tor
     curl -x socks5://localhost:9050 ipinfo.io 
 
+# 修改链路ip和重新加载配置 #
+
+    sudo systemctl reload tor@default.service
 
 # 参考链接 #
 [https://blog.csdn.net/yeshankuangrenaaaaa/article/details/100533939](https://blog.csdn.net/yeshankuangrenaaaaa/article/details/100533939)
