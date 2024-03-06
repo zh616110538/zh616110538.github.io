@@ -1,0 +1,86 @@
+---
+layout:        keynote
+title:         "Linux上基于虚拟网卡测试路由功能"
+date:          "2024-03-06 11:00:25 +0800"
+author:        "Remilia Scarlet"
+header-img:    "img/post-bg-2015.jpg"
+tags:
+    - linux
+    - veth
+    - iptables
+    - netns
+---
+
+# 背景 
+
+最近在做路由功能时发现有一些机器配置之后依然无法路由，因此寻找一个能够本地测试路由功能的方法来排查问题。
+
+# 方案
+
+在Linux系统上，你可以使用ip命令和虚拟网络接口，如虚拟以太网（veth）对或网络命名空间，来模拟一个虚拟网卡，并通过现有的eth0网卡转发数据给目标IP 192.168.1.1。以下是如何实现这一目的的步骤：
+
+## 步骤1：创建一个虚拟网络命名空间
+网络命名空间允许你隔离网络环境。在这个隔离的环境中，你可以创建虚拟设备和配置，而不会影响主系统。
+
+```bash
+sudo ip netns add testns
+```
+
+## 步骤2：创建一对虚拟以太网（veth）接口
+这一对接口将充当两个网络命名空间之间的桥梁，或者是网络命名空间与主网络之间的桥梁。
+
+```bash
+sudo ip link add veth0 type veth peer name veth1
+```
+
+## 步骤3：将一个veth接口移到你创建的网络命名空间
+```bash
+sudo ip link set veth1 netns testns
+```
+
+## 步骤4：配置虚拟以太网接口的IP地址
+为两个veth接口分别配置IP地址。注意，这里使用的IP地址需要在同一子网内，以便它们可以互相通信。
+
+在主命名空间中配置veth0：
+
+```bash
+sudo ip addr add 192.168.100.1/24 dev veth0
+sudo ip link set veth0 up
+```
+在testns网络命名空间中配置veth1：
+
+```bash
+sudo ip netns exec testns ip addr add 192.168.100.2/24 dev veth1
+sudo ip netns exec testns ip link set veth1 up
+```
+
+## 步骤5：在网络命名空间中配置默认路由
+这一步确保了从testns网络命名空间发出的所有流量都会经过veth0接口。
+
+```bash
+sudo ip netns exec testns ip route add default via 192.168.100.1
+```
+## 步骤6：启用IP转发
+确保你的系统允许IP转发。
+
+```bash
+sudo sysctl -w net.ipv4.ip_forward=1
+```
+
+## 步骤7：配置NAT
+如果目标IP不在你的本地网络中，你可能需要配置NAT规则，以允许从虚拟网络命名空间发出的流量通过你的物理网络接口eth0出去。
+
+```bash
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+```
+
+
+## 步骤8：测试路由功能
+
+现在，你可以在testns网络命名空间中尝试ping目标IP192.168.1.1来测试路由功能。
+
+```bash
+sudo ip netns exec testns ping 192.168.1.1
+```
+
+这样，你就设置了一个虚拟网络接口，并尝试通过你的物理网络接口eth0转发数据给目标IP，以此来测试路由功能是否正常工作。
