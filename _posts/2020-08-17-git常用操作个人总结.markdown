@@ -41,7 +41,6 @@ tags:
 ## git取消代理设置
     git config --global --unset http.proxy
     git config --global --unset https.proxy
-    npm config delete proxy
 
 ## 修改缓冲区的方法提高克隆速度（非代理）
 
@@ -69,4 +68,16 @@ tags:
     git revert HEAD^  撤销前前一次的commit
     git revert <commitid>  撤销某一次的改动
 
+## 从git log中查找某个文件中的某个字段在哪一个commit中修改
 
+    git log -S "要搜索的字段" -- <文件名>
+
+## 从另外一个分支cherry pick最新N笔提交
+
+    { git log --format=format:%H feature -n N; echo; } | tac | sed '$d' | xargs git cherry-pick
+
+## 合并最新的N笔提交
+
+    git rebase -i HEAD~N
+
+然后将除了第一个提交之外的所有提交从`pick`改为`squash`或`s`。
