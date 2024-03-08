@@ -1,5 +1,5 @@
 ---
-layout:        keynote
+layout:        post
 title:         "Linux上基于虚拟网卡测试路由功能"
 date:          "2024-03-06 11:00:25 +0800"
 author:        "Remilia Scarlet"

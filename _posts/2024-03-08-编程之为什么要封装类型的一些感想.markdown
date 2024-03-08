@@ -1,0 +1,51 @@
+---
+layout:        post
+title:         "编程之为什么要封装类型的一些感想"
+date:          "2024-03-08 16:13:03 +0800"
+author:        "Remilia Scarlet"
+header-img:    "img/post-bg-2015.jpg"
+tags:
+    - C++
+---
+
+# 背景 
+
+以前一直没有理解到为什么这些框架都喜欢把用的类型再封装一次，尤其是类似于
+
+    template<typename T>
+    using xxx::vector<T> = std::vector<T>;
+    
+今天遇到一个case忽然能理解了。
+
+---
+
+之前写了段代码，要求用户传一个回调函数进来，接口类似于
+
+    std::function<void(std::unique_ptr<MessageT>)> cb_;
+用户写的接口类似于
+
+    void onMessage(std::unique_ptr<uto::idl::MyTest> msg_ptr);
+
+现在问题来了，我想对这个回调进行修改，为unique_ptr提供一个定制的deleter，也就是要改为
+
+    std::function<void(std::unique_ptr<MessageT, MyDeleter>)> cb_;
+
+但是由于之前用的是std的unique_ptr，根本就做不了修改。  
+
+---
+
+如果之前定义了一层的话，类似于
+
+    template<typename T>
+    using xxx::unique_ptr<T> = std::unique_ptr<T>;
+
+这样就可以将接口定义为
+
+    std::function<void(xxx::unique_ptr<MessageT>)> cb_;
+
+然后就可以放心大胆的改接口为
+
+    template<typename T>
+    using xxx::unique_ptr<T> = std::unique_ptr<T, MyDeleter>;
+
+这样就可以给自己留有余地了，不用求着别人一起跟着改。
