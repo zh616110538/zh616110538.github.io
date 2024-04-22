@@ -1,0 +1,169 @@
+---
+layout:        post
+title:         "UPnP/DLNA协议实践"
+date:          "2024-04-22 19:25:47 +0800"
+author:        "Remilia Scarlet"
+header-img:    "img/post-bg-2015.jpg"
+tags:
+    - UPnP DLNA
+---
+
+# 背景
+
+买了个JBL的音响，希望能用来实现一些有趣的功能。
+
+# UPnP协议
+
+具体细节可以参考这个[博客](https://breezetemple.github.io/2019/02/25/dlan-introduction/),讲的比较详细。
+
+# 动手实践
+
+## 发现设备
+使用[nanodlna](https://github.com/gabrielmagno/nano-dlna)来发现设备，输出结果如下：
+```
+[urn:schemas-upnp-org:device:MediaRenderer:1][urn:schemas-upnp-org:service:AVTransport:1] JBL Authentics 500_26B0 @ http://192.168.50.90:49152/description.xml 
+```
+
+
+## 请求设备描述文档
+
+    curl http://192.168.50.90:49152/description.xml  
+
+其中返回结果的控制部分如下
+```xml
+<service>
+    <serviceType>urn:schemas-upnp-org:service:AVTransport:1</serviceType>
+    <serviceId>urn:upnp-org:serviceId:AVTransport</serviceId>
+    <SCPDURL>/upnp/rendertransportSCPD.xml</SCPDURL>
+    <controlURL>/upnp/control/rendertransport1</controlURL>
+    <eventSubURL>/upnp/event/rendertransport1</eventSubURL>
+</service>
+```
+
+## 请求服务描述文档
+
+    curl http://192.168.50.90:49152/upnp/rendertransportSCPD.xml
+
+截取其中最重要的两个部分，分别为设置uri和play接口  
+
+设置uri
+```xml
+<action>
+    <name>SetAVTransportURI</name>
+    <argumentList>
+        <argument>
+            <name>InstanceID</name>
+            <direction>in</direction>
+            <relatedStateVariable>A_ARG_TYPE_InstanceID</relatedStateVariable>
+        </argument>
+        <argument>
+            <name>CurrentURI</name>
+            <direction>in</direction>
+            <relatedStateVariable>AVTransportURI</relatedStateVariable>
+        </argument>
+        <argument>
+            <name>CurrentURIMetaData</name>
+            <direction>in</direction>
+            <relatedStateVariable>AVTransportURIMetaData</relatedStateVariable>
+        </argument>
+    </argumentList>
+</action>
+```
+**这里argument代表参数，我这里有三个参数(别的设备可能不一样)**
+
+play接口
+```xml
+<action>
+    <name>Play</name>
+    <argumentList>
+        <argument>
+            <name>InstanceID</name>
+            <direction>in</direction>
+            <relatedStateVariable>A_ARG_TYPE_InstanceID</relatedStateVariable>
+        </argument>
+        <argument>
+            <name>Speed</name>
+            <direction>in</direction>
+            <relatedStateVariable>TransportPlaySpeed</relatedStateVariable>
+        </argument>
+    </argumentList>
+</action>
+```
+
+
+## 使用curl发送DLNA请求
+
+1. 设置URI，这里我的URI是`http://192.168.50.33/mnt/FLAC/06.Farewell%2C%20My%20Friend.flac`
+
+```Bash
+curl -H 'Content-Type: text/xml; charset=utf-8' \
+-H 'SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#SetAVTransportURI"' \
+-d '<?xml version="1.0"?>
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+    s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+    <s:Body>
+        <u:SetAVTransportURI xmlns:u="urn:schemas-upnp-org:service:AVTransport:1">
+            <InstanceID>0</InstanceID>
+            <CurrentURI>http://192.168.50.33/mnt/FLAC/06.Farewell%2C%20My%20Friend.flac</CurrentURI>
+            <CurrentURIMetaData></CurrentURIMetaData>
+        </u:SetAVTransportURI>
+    </s:Body>
+</s:Envelope>' \
+'http://192.168.50.90:49152/upnp/control/rendertransport1'
+```
+
+2. 播放
+
+```Bash
+curl -H 'Content-Type: text/xml; charset=utf-8' \
+-H 'SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#Play"' \
+-d '<?xml version="1.0"?>
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+    s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+    <s:Body>
+        <u:Play xmlns:u="urn:schemas-upnp-org:service:AVTransport:1">
+            <InstanceID>0</InstanceID>
+            <Speed>1</Speed>
+        </u:Play>
+    </s:Body>
+</s:Envelope>' \
+'http://192.168.50.90:49152/upnp/control/rendertransport1'
+```
+
+3. 暂停
+
+```bash
+curl -H 'Content-Type: text/xml; charset=utf-8' \
+-H 'SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#Pause"' \
+-d '<?xml version="1.0"?>
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+    s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+    <s:Body>
+        <u:Pause xmlns:u="urn:schemas-upnp-org:service:AVTransport:1">
+            <InstanceID>0</InstanceID>
+        </u:Pause>
+    </s:Body>
+</s:Envelope>' \
+'http://192.168.50.90:49152/upnp/control/rendertransport1'
+```
+
+4. 结束播放
+
+```bash
+curl -H 'Content-Type: text/xml; charset=utf-8' \
+-H 'SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#Stop"' \
+-d '<?xml version="1.0"?>
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+    s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+    <s:Body>
+        <u:Stop xmlns:u="urn:schemas-upnp-org:service:AVTransport:1">
+            <InstanceID>0</InstanceID>
+        </u:Stop>
+    </s:Body>
+</s:Envelope>' \
+'http://192.168.50.90:49152/upnp/control/rendertransport1'
+```
+
+
+## 订阅
+TODO
