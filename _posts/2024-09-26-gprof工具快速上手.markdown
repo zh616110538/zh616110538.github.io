@@ -1,0 +1,38 @@
+---
+layout:        post
+title:         "gprof工具快速上手"
+date:          "2024-09-26 22:44:33 +0800"
+author:        "Remilia Scarlet"
+header-img:    "img/post-bg-2015.jpg"
+tags:
+    - gprog profiling
+---
+
+# 介绍
+
+gprof是Linux下一个用于profiling的工具，主要用于分析程序的执行时间。
+
+# 用法简单介绍
+
+1. 编译程序：使用-pg选项编译你的程序。例如：
+
+    gcc -pg -o my_program my_program.c
+
+2. 运行程序：执行编译后的程序，它会生成一个gmon.out文件：
+
+./my_program
+
+3. 生成报告：使用gprof命令分析生成的文件：
+
+    gprof my_program gmon.out > profile.txt
+
+查看报告：打开profile.txt，查看性能分析结果。
+
+
+# 原理简单调研
+
+方法：编译时分别指定-p与不指定编译，查看目标物，使用objdump对比不同
+
+![/img/gprof.png](/img/gprof.png)
+
+如图所示，该功能主要利用了插桩的技巧，在运行函数之前调用mcount进行统计
